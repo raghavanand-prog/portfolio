@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
-<script>(function(d){d.classList.add('js');var seen=null;try{seen=sessionStorage.getItem('ra-boot');}catch(e){}var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;if(!seen&&!calm)d.classList.add('boot-on');setTimeout(function(){d.classList.add('ready');},1600);setTimeout(function(){d.classList.remove('boot-on');},4000);})(document.documentElement);</script>
+<script>(function(d){d.classList.add('js');setTimeout(function(){d.classList.add('ready');},1600);})(document.documentElement);</script>
 <style>
 :root{
   color-scheme:dark;
@@ -329,17 +329,25 @@ span.ev{color:var(--muted)}
 .project-visual{perspective:1400px}
 .a-on .btn{will-change:transform}
 
-/* boot sequence (first visit per session) */
-.boot{display:none}
-.boot-on{overflow:hidden}
-.boot-on .boot{position:fixed;inset:0;z-index:150;display:flex;align-items:flex-end;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gutter) calc(env(safe-area-inset-bottom,0px) + clamp(32px,7vw,72px));cursor:pointer}
-.boot-inner{width:100%;max-width:var(--maxw);margin-inline:auto;font:400 13px/1.9 var(--mono);color:var(--muted)}
-.boot-line{margin:0;min-height:1.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.boot-line .bp{color:var(--accent-hi);margin-right:10px}
-.boot-line .bok{color:var(--pass)}
-.boot-bar{margin-top:18px;height:1px;background:var(--line)}
-.boot-bar span{display:block;height:100%;background:var(--accent-hi);transform:scaleX(0);transform-origin:left}
-.boot-skip{margin:14px 0 0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+/* warp: the canvas sticks behind the hero, then you fly through the five gates to the core */
+.warp{position:relative}
+.space{position:sticky;top:0;display:block;width:100%;height:100vh;height:100svh;margin-bottom:-100vh;margin-bottom:-100svh;z-index:0;pointer-events:none}
+.warp .hero{z-index:1}
+.warp .hero::after{display:none}
+.warp-tail{height:190vh}
+.warp::after{content:'';position:absolute;left:0;right:0;bottom:0;height:32vh;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(8,9,11,0),var(--bg))}
+@media (max-width:700px){.warp-tail{height:140vh}}
+@media (prefers-reduced-motion:reduce){.warp-tail{height:0}.warp::after{display:none}}
+
+/* section dots + back to top */
+.scene-dots{position:fixed;right:clamp(14px,1.8vw,28px);top:50%;z-index:80;display:flex;flex-direction:column;gap:14px;transform:translateY(-50%)}
+.scene-dots a{display:block;width:8px;height:8px;border-radius:50%;background:rgba(238,240,244,.5);transition:background-color .3s,box-shadow .3s,transform .4s var(--ease)}
+.scene-dots a:hover{background:#fff;transform:scale(1.35)}
+.scene-dots a.active{background:transparent;box-shadow:0 0 0 1.5px rgba(238,240,244,.95);transform:scale(1.3)}
+@media (max-width:980px){.scene-dots{display:none}}
+.totop{position:fixed;right:clamp(16px,2.4vw,32px);bottom:calc(env(safe-area-inset-bottom,0px) + clamp(16px,2.4vw,32px));z-index:80;width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line-2);border-radius:50%;background:rgba(8,9,11,.72);color:var(--text);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .45s var(--ease),transform .45s var(--ease),border-color .3s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{border-color:rgba(236,240,247,.5)}
 
 /* experience: a progress rail that fills as you read down the timeline */
 .a-on .timeline{position:relative}
@@ -378,15 +386,6 @@ span.ev{color:var(--muted)}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="grain" aria-hidden="true"></div>
-<div class="boot" id="boot" aria-hidden="true">
-  <div class="boot-inner">
-    <p class="boot-line"><span class="bp">&gt;</span><span class="bt" data-t="establishing secure session"></span></p>
-    <p class="boot-line"><span class="bp">&gt;</span><span class="bt" data-t="verifying identity"></span><span class="bok"> &middot; ok</span></p>
-    <p class="boot-line"><span class="bp">&gt;</span><span class="bt" data-t="access granted"></span></p>
-    <div class="boot-bar"><span></span></div>
-    <p class="boot-skip">Click or press any key to skip</p>
-  </div>
-</div>
 
 <header class="nav" id="nav">
   <div class="nav-inner">
@@ -417,11 +416,22 @@ span.ev{color:var(--muted)}
   <div class="menu-foot"><span>anandraghav842@gmail.com</span><span>Bengaluru, IN</span></div>
 </div>
 
+<nav class="scene-dots" aria-label="Section shortcuts">
+  <a href="#top" data-go data-sec="top" aria-label="Intro"></a>
+  <a href="#about" data-go data-sec="about" aria-label="About"></a>
+  <a href="#work" data-go data-sec="work" aria-label="Work"></a>
+  <a href="#experience" data-go data-sec="experience" aria-label="Experience"></a>
+  <a href="#stack" data-go data-sec="stack" aria-label="Stack"></a>
+  <a href="#certifications" data-go data-sec="certifications" aria-label="Certifications"></a>
+  <a href="#contact" data-go data-sec="contact" aria-label="Contact"></a>
+</nav>
+<a class="totop" id="totop" href="#top" data-go aria-label="Back to top"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3.5 11.5 9 6l5.5 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+
 <main class="page" id="main">
 
+  <div class="warp" id="warp">
+  <canvas class="space" id="space" aria-hidden="true"></canvas>
   <section class="hero" id="top" aria-label="Introduction">
-    <canvas class="net" id="net" aria-hidden="true"></canvas>
-    <div class="hero-glow" aria-hidden="true"></div>
     <div class="container hero-inner">
       <p class="status hero-fade"><span class="pulse" aria-hidden="true"></span><span class="status-t">Open to cybersecurity roles &amp; conversations</span></p>
       <h1 class="hero-name" id="heroName">
@@ -443,6 +453,8 @@ span.ev{color:var(--muted)}
       </dl>
     </div>
   </section>
+  <div class="warp-tail" aria-hidden="true"></div>
+  </div>
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track" id="marquee">
@@ -746,7 +758,7 @@ span.ev{color:var(--muted)}
   const animeOn = !!(A && A.animate && A.splitText && !reduce);
   const introOn = animeOn && !de.classList.contains('ready');
   if (animeOn) de.classList.add('a-on');
-  if (!introOn) { de.classList.add('ready'); de.classList.remove('boot-on'); }
+  if (!introOn) de.classList.add('ready');
   const scrollHooks = [];
   const $ = (s, r) => (r || d).querySelector(s);
   const $$ = (s, r) => Array.from((r || d).querySelectorAll(s));
@@ -765,7 +777,7 @@ span.ev{color:var(--muted)}
     w.addEventListener('wheel', (e) => {
       if (e.ctrlKey) return;
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      if (menuOpen || de.classList.contains('boot-on')) { e.preventDefault(); return; }
+      if (menuOpen) { e.preventDefault(); return; }
       const box = e.target.closest && e.target.closest('[data-native-scroll]');
       if (box) {
         const up = e.deltaY < 0;
@@ -859,6 +871,7 @@ span.ev{color:var(--muted)}
           if (on) current = a;
         });
         if (onActiveChange) onActiveChange(current);
+        $$('.scene-dots a').forEach((a) => a.classList.toggle('active', a.dataset.sec === e.target.id));
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     ['top', 'about', 'work', 'experience', 'stack', 'certifications', 'contact'].forEach((id) => { const el = d.getElementById(id); if (el) secIO.observe(el); });
@@ -1038,6 +1051,160 @@ span.ev{color:var(--muted)}
     const setGate = (p) => { gateP = p; };
     return { resize, seed, step, draw, setGate };
   })();
+  /* ---------------- warp scene: through five security gates to the core ---------------- */
+  const warp = $('#warp');
+  const Space = (() => {
+    const cv = $('#space');
+    if (!warp || !cv || !cv.getContext) return null;
+    const ctx = cv.getContext('2d');
+    const GATES = ['SAST', 'SCA', 'SECRETS', 'IAC', 'IMAGE'];
+    const ORBITS = [['IAM', 'AWS', 'Terraform'], ['Semgrep', 'Trivy', 'Checkov', 'Gitleaks'], ['Python', 'PyTorch', 'scikit-learn', 'JWT']];
+    const GAP = 1.1, Z0 = 1, ZC = Z0 + GATES.length * GAP + .7, RW = .9;
+    let W = 0, H = 0, f = 1, cx = 0, cy = 0, t = 0, speed = 0, lastP = -1, cometA = 0;
+    const stars = [];
+    const star = (z) => { const a = Math.random() * Math.PI * 2, r = .12 + Math.random() * 2.3; return { x: Math.cos(a) * r, y: Math.sin(a) * r, z, tw: Math.random() * 6 }; };
+    const font = (wt, px, fam) => wt + ' ' + Math.round(px) + 'px ' + (fam || '"Geist Mono", ui-monospace, monospace');
+    function resize() {
+      const r = cv.getBoundingClientRect();
+      W = r.width; H = r.height;
+      const dpr = Math.min(w.devicePixelRatio || 1, W < 700 ? 1.5 : 2);
+      cv.width = Math.max(1, Math.round(W * dpr)); cv.height = Math.max(1, Math.round(H * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx = W / 2; cy = H / 2; f = Math.min(W, H) * .62;
+      if (!stars.length) for (let i = 0; i < (W < 700 ? 170 : 320); i++) stars.push(star(.3 + Math.random() * 7.7));
+    }
+    const progress = () => {
+      const r = warp.getBoundingClientRect(), run = r.height - H;
+      return run > 0 ? clamp(-r.top / run, 0, 1) : 0;
+    };
+    function chip(label, x, y, a, size) {
+      ctx.font = font(500, size);
+      const tw = ctx.measureText(label).width, pw = tw + size * 1.5, ph = size * 2.1;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x - pw / 2, y - ph / 2, pw, ph, ph / 2); else ctx.rect(x - pw / 2, y - ph / 2, pw, ph);
+      ctx.fillStyle = 'rgba(18,20,24,' + (.92 * a) + ')'; ctx.fill();
+      ctx.strokeStyle = 'rgba(157,187,255,' + (.5 * a) + ')'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = 'rgba(238,240,244,' + a + ')'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y + .5); ctx.textBaseline = 'alphabetic';
+    }
+    function draw(dt) {
+      const p = progress();
+      if (lastP < 0) lastP = p;
+      speed = lerp(speed, Math.abs(p - lastP) / Math.max(dt, 1 / 240), .12);
+      lastP = p; t += dt;
+      const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      const cz = e * (ZC - 1.35);
+      ctx.clearRect(0, 0, W, H);
+      ctx.textAlign = 'center';
+
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * .62);
+      bg.addColorStop(0, 'rgba(38,70,170,' + (.2 + .2 * p) + ')');
+      bg.addColorStop(.5, 'rgba(18,32,86,.12)');
+      bg.addColorStop(1, 'rgba(8,9,11,0)');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      const v = .1 + speed * 14, streak = Math.min(speed * 3.2, .9);
+      ctx.lineCap = 'round';
+      for (const s of stars) {
+        s.z -= v * dt * .6;
+        if (s.z < .12) Object.assign(s, star(8));
+        const x = cx + s.x / s.z * f, y = cy + s.y / s.z * f;
+        if (x < -60 || x > W + 60 || y < -60 || y > H + 60) { Object.assign(s, star(6 + Math.random() * 2)); continue; }
+        const a = clamp((8 - s.z) / 6, 0, 1) * (.35 + .25 * Math.sin(t * 2 + s.tw));
+        if (streak > .03) {
+          const z2 = s.z + streak;
+          ctx.strokeStyle = 'rgba(220,230,255,' + a + ')';
+          ctx.lineWidth = clamp(1.6 / s.z, .5, 2);
+          ctx.beginPath(); ctx.moveTo(cx + s.x / z2 * f, cy + s.y / z2 * f); ctx.lineTo(x, y); ctx.stroke();
+        } else {
+          const sz = clamp(1.6 / s.z, .6, 2.2);
+          ctx.fillStyle = 'rgba(220,230,255,' + a + ')';
+          ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+        }
+      }
+
+      const ka = clamp(1 - p * 3.5, 0, 1);
+      if (ka > 0) {
+        cometA += dt * .9;
+        const base = f * .2;
+        for (let i = 17; i >= 0; i--) {
+          const aa = cometA - i * .045;
+          const x = cx + Math.cos(aa) * base * 1.3, y = cy + Math.sin(aa) * base * .5;
+          ctx.fillStyle = 'rgba(238,240,244,' + (ka * (i ? .5 * (1 - i / 18) : 1)) + ')';
+          const sz = i ? 1.6 : 3;
+          ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+        }
+      }
+
+      let hud = '';
+      const dim = .32 + .68 * clamp(p * 4, 0, 1), diag = Math.hypot(W, H) / 2;
+      for (let i = GATES.length - 1; i >= 0; i--) {
+        const dz = Z0 + i * GAP - cz;
+        if (dz < .06) continue;
+        const r = RW / dz * f;
+        const a = clamp(1.8 / dz, .12, 1) * clamp((diag * 1.15 - r) / (diag * .35), 0, 1) * dim;
+        if (a <= .01) continue;
+        ctx.save();
+        ctx.shadowColor = 'rgba(157,187,255,.9)'; ctx.shadowBlur = 18;
+        ctx.strokeStyle = 'rgba(238,240,244,' + a + ')';
+        ctx.lineWidth = clamp(3.2 / dz, 1, 3.4);
+        ctx.beginPath(); ctx.arc(cx, cy, r * (1 + Math.sin(t * 1.4 + i) * .004), 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+        if (r > 40) {
+          ctx.font = font(500, clamp(9 + 6 / dz, 10, 15));
+          ctx.fillStyle = 'rgba(157,187,255,' + (a * .9) + ')';
+          ctx.fillText(GATES[i], cx, cy - r - 12);
+        }
+        if (dz < 1.25 && p > .12) hud = 'GATE ' + String(i + 1).padStart(2, '0') + ' / 05 · ' + GATES[i];
+      }
+
+      const ca = clamp((p - .38) / .3, 0, 1);
+      if (ca > 0) {
+        const rc = .32 / (ZC - cz) * f;
+        const glow = ctx.createRadialGradient(cx, cy, rc * .6, cx, cy, rc * 3.2);
+        glow.addColorStop(0, 'rgba(157,187,255,' + (.42 * ca) + ')');
+        glow.addColorStop(1, 'rgba(79,134,255,0)');
+        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(cx, cy, rc * 3.2, 0, Math.PI * 2); ctx.fill();
+        const size = clamp(rc * .16, 10, 13);
+        ORBITS.forEach((names, k) => {
+          const ro = rc * (1.75 + k * .62);
+          ctx.strokeStyle = 'rgba(238,240,244,' + (.28 * ca) + ')'; ctx.lineWidth = 1;
+          ctx.setLineDash(k === 1 ? [3, 6] : []);
+          ctx.beginPath(); ctx.arc(cx, cy, ro, 0, Math.PI * 2); ctx.stroke();
+          ctx.setLineDash([]);
+          names.forEach((n, j) => {
+            const ang = t * (.16 - k * .04) * (k % 2 ? -1 : 1) + j / names.length * Math.PI * 2 + k;
+            chip(n, cx + Math.cos(ang) * ro, cy + Math.sin(ang) * ro, ca, size);
+          });
+        });
+        ctx.save();
+        ctx.shadowColor = 'rgba(157,187,255,.95)'; ctx.shadowBlur = 40 * ca;
+        ctx.fillStyle = 'rgba(238,240,244,' + ca + ')';
+        ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = 'rgba(8,9,11,' + ca + ')';
+        ctx.font = font(900, rc * .9, '"Big Shoulders Display", Impact, sans-serif');
+        ctx.textBaseline = 'middle'; ctx.fillText('RA', cx, cy + rc * .05); ctx.textBaseline = 'alphabetic';
+        if (p > .9) hud = 'CORE · STACK';
+      }
+
+      if (hud) {
+        ctx.font = font(500, 11);
+        ctx.fillStyle = 'rgba(144,151,163,.9)';
+        ctx.fillText(hud, cx, H - 40);
+      }
+    }
+    return { resize, draw };
+  })();
+  let spaceVisible = true;
+  if (Space) {
+    Space.resize(); Space.draw(0);
+    if (hasIO) new IntersectionObserver((es) => { spaceVisible = es[0].isIntersecting; }).observe(warp);
+    if (d.fonts && d.fonts.ready) d.fonts.ready.then(() => Space.draw(0));
+  }
+  const totop = $('#totop');
+  if (totop) scrollHooks.push((y) => totop.classList.toggle('show', y > w.innerHeight * 1.2));
+
   let netVisible = true;
   if (Net) {
     Net.resize(); Net.seed(); Net.draw();
@@ -1265,6 +1432,7 @@ span.ev{color:var(--muted)}
     effects(dt);
     if (Net && netVisible && !reduce) { Net.step(dt); Net.draw(); }
     if (Stego && stegoVisible && !reduce) Stego.step(dt);
+    if (Space && spaceVisible && !reduce) Space.draw(dt);
     w.requestAnimationFrame(loop);
   }
   onScrollChange(w.scrollY);
@@ -1276,6 +1444,7 @@ span.ev{color:var(--muted)}
     rz = w.requestAnimationFrame(() => {
       heroH = hero ? hero.offsetHeight : heroH;
       if (Net) { Net.resize(); if (reduce) { Net.seed(); Net.draw(); } }
+      if (Space) { Space.resize(); Space.draw(0); }
       if (Stego) Stego.size();
       if (onActiveChange) onActiveChange($('.nav-links a.active'), true);
       lastY = -1;
@@ -1326,32 +1495,13 @@ span.ev{color:var(--muted)}
     const decode = (params) => scrambleText(Object.assign({ cursor: '░▒▓', perturbation: .15 }, params));
     const vw = () => w.innerWidth;
 
-    /* Boot sequence, then the hero assembles itself as the curtain lifts. */
+    /* Hero intro: the name assembles letter by letter while the status line decodes. */
     if (introOn) {
       const touched = [];
       const splits = [];
-      const boot = $('#boot');
-      const booting = de.classList.contains('boot-on') && !!boot;
-      const finishBoot = () => {
-        de.classList.remove('boot-on');
-        try { sessionStorage.setItem('ra-boot', '1'); } catch (e) { /* storage unavailable */ }
-      };
       try {
-        const tl = createTimeline({ defaults: { ease: 'out(4)' }, onComplete: finishBoot });
-        let t0 = 0;
-        if (booting) {
-          const lines = $$('.bt', boot), ok = $('.bok', boot), bar = $('.boot-bar span', boot), skip = $('.boot-skip', boot);
-          utils.set([ok, skip], { opacity: 0 });
-          lines.forEach((el, i) => tl.add(el, { innerHTML: decode({ text: el.dataset.t, override: '', duration: 420 }) }, i * 250));
-          tl.add(ok, { opacity: 1, duration: 160, ease: 'linear' }, 640)
-            .add(skip, { opacity: 1, duration: 400 }, 200)
-            .add(bar, { scaleX: [0, 1], duration: 900, ease: 'inOut(3)' }, 0)
-            .add(boot, { y: '-100%', duration: 900, ease: 'inOut(4)', onComplete: finishBoot }, 980);
-          t0 = 1080;
-          const jump = () => { tl.seek(tl.duration); };
-          boot.addEventListener('pointerdown', jump, { once: true });
-          w.addEventListener('keydown', jump, { once: true });
-        }
+        const tl = createTimeline({ defaults: { ease: 'out(4)' } });
+        const t0 = 0;
         const navItems = $$('.nav-inner > *');
         const lineIns = $$('#heroName .line-in');
         const chars = [];
@@ -1380,7 +1530,6 @@ span.ev{color:var(--muted)}
         if (Net) Net.setGate(1);
         de.classList.remove('a-on');
         de.classList.add('ready');
-        finishBoot();
       }
     }
 
