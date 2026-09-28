@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<script>(function(d){d.classList.add('js');setTimeout(function(){d.classList.add('ready');},1600);})(document.documentElement);</script>
 <style>
 :root{
   color-scheme:dark;
@@ -312,6 +313,26 @@ span.ev{color:var(--muted)}
 .footer a{color:var(--muted);text-decoration:none;transition:color .25s}
 .footer a:hover{color:var(--text)}
 
+/* ---------- motion layer ----------
+   Intro animations stay paused until either anime.js takes over (.a-on)
+   or the page falls back to CSS (.ready), so nothing flashes or stays hidden. */
+.js .nav-inner > *{animation:fadeDown .8s var(--ease) both}
+.js .nav-inner > *:nth-child(2){animation-delay:.06s}
+.js .nav-inner > *:nth-child(n+3){animation-delay:.12s}
+.js .hero-name .line-in,.js .hero-fade,.js .nav-inner > *{animation-play-state:paused}
+.js.ready .hero-name .line-in,.js.ready .hero-fade,.js.ready .nav-inner > *{animation-play-state:running}
+.a-on .hero-name .line-in,.a-on .hero-fade,.a-on .nav-inner > *{animation:none}
+.hero-name .line-in{white-space:nowrap}
+.nav-links{position:relative}
+.nav-ind{position:absolute;left:0;bottom:-7px;width:0;height:1px;background:var(--text);opacity:0;pointer-events:none}
+.a-on .nav-links a::after{display:none}
+.project-visual{perspective:1400px}
+.a-on .btn{will-change:transform}
+@media print{
+  .nav-inner > *,.hero-fade,.sec-desc,.kind,.project-thesis,.sg h3,.sg li,[data-word],[data-char]{opacity:1!important;transform:none!important}
+}
+
+@keyframes fadeDown{from{opacity:0;transform:translate3d(0,-10px,0)}to{opacity:1;transform:none}}
 @keyframes rise{from{transform:translate3d(0,105%,0)}to{transform:none}}
 @keyframes fadeUp{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:none}}
 @keyframes ping{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.8);opacity:0}}
@@ -335,6 +356,7 @@ span.ev{color:var(--muted)}
       <a href="#experience" data-go>Experience</a>
       <a href="#stack" data-go>Stack</a>
       <a href="#certifications" data-go>Certifications</a>
+      <span class="nav-ind" aria-hidden="true"></span>
     </nav>
     <a class="btn btn-ghost btn-sm" href="#contact" data-go>Get in touch</a>
     <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
@@ -360,7 +382,7 @@ span.ev{color:var(--muted)}
     <canvas class="net" id="net" aria-hidden="true"></canvas>
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="container hero-inner">
-      <p class="status hero-fade"><span class="pulse" aria-hidden="true"></span>Open to cybersecurity roles &amp; conversations</p>
+      <p class="status hero-fade"><span class="pulse" aria-hidden="true"></span><span class="status-t">Open to cybersecurity roles &amp; conversations</span></p>
       <h1 class="hero-name" id="heroName">
         <span class="line"><span class="line-in">Raghav</span></span>
         <span class="line"><span class="line-in outline">Anand</span></span>
@@ -403,14 +425,14 @@ span.ev{color:var(--muted)}
   <section class="section" id="about" aria-labelledby="about-title">
     <div class="container">
       <header class="sec-head" data-reveal>
-        <p class="cmd"><span class="prompt">$</span>whoami</p>
+        <p class="cmd"><span class="prompt">$</span><span class="cmd-t">whoami</span></p>
         <h2 class="sec-title" id="about-title">About</h2>
       </header>
       <p class="statement" id="statement" data-reveal>I&rsquo;m Raghav &mdash; an MCA Cybersecurity student at CHRIST University, working across <mark>identity, application and cloud security.</mark> I learned IAM on the job at SpazorLabs, and everything else by <mark>building and breaking things:</mark> pipelines that refuse to ship vulnerable code, and models that find data hidden in plain sight.</p>
       <div class="facts">
-        <div class="fact" data-reveal="0"><span class="fact-num">5</span><p>security gates every build must pass before it can reach production</p></div>
-        <div class="fact" data-reveal="1"><span class="fact-num">6<small>months</small></span><p>of hands-on IAM &amp; identity governance work at SpazorLabs</p></div>
-        <div class="fact" data-reveal="2"><span class="fact-num">2</span><p>security projects built end to end and deployed live</p></div>
+        <div class="fact" data-reveal="0"><span class="fact-num"><span class="fact-n">5</span></span><p>security gates every build must pass before it can reach production</p></div>
+        <div class="fact" data-reveal="1"><span class="fact-num"><span class="fact-n">6</span><small>months</small></span><p>of hands-on IAM &amp; identity governance work at SpazorLabs</p></div>
+        <div class="fact" data-reveal="2"><span class="fact-num"><span class="fact-n">2</span></span><p>security projects built end to end and deployed live</p></div>
       </div>
     </div>
   </section>
@@ -418,7 +440,7 @@ span.ev{color:var(--muted)}
   <section class="section" id="work" aria-labelledby="work-title">
     <div class="container">
       <header class="sec-head" data-reveal>
-        <p class="cmd"><span class="prompt">$</span>ls ./projects</p>
+        <p class="cmd"><span class="prompt">$</span><span class="cmd-t">ls ./projects</span></p>
         <h2 class="sec-title" id="work-title">Selected work</h2>
         <p class="sec-desc">Two security builds, both deployed, both with source on GitHub. Run the pipeline simulation below to see the core idea in action.</p>
       </header>
@@ -532,7 +554,7 @@ span.ev{color:var(--muted)}
   <section class="section" id="experience" aria-labelledby="exp-title">
     <div class="container">
       <header class="sec-head" data-reveal>
-        <p class="cmd"><span class="prompt">$</span>cat ./path.log</p>
+        <p class="cmd"><span class="prompt">$</span><span class="cmd-t">cat ./path.log</span></p>
         <h2 class="sec-title" id="exp-title">Experience &amp; education</h2>
         <p class="sec-desc">Where I&rsquo;ve studied and worked so far.</p>
       </header>
@@ -573,7 +595,7 @@ span.ev{color:var(--muted)}
   <section class="section" id="stack" aria-labelledby="stack-title">
     <div class="container">
       <header class="sec-head" data-reveal>
-        <p class="cmd"><span class="prompt">$</span>which --all</p>
+        <p class="cmd"><span class="prompt">$</span><span class="cmd-t">which --all</span></p>
         <h2 class="sec-title" id="stack-title">Stack</h2>
         <p class="sec-desc">Only tools I&rsquo;ve used in a real build &mdash; each one linked to where.</p>
       </header>
@@ -620,7 +642,7 @@ span.ev{color:var(--muted)}
   <section class="section" id="certifications" aria-labelledby="cert-title">
     <div class="container">
       <header class="sec-head" data-reveal>
-        <p class="cmd"><span class="prompt">$</span>ls ./certs</p>
+        <p class="cmd"><span class="prompt">$</span><span class="cmd-t">ls ./certs</span></p>
         <h2 class="sec-title" id="cert-title">Certifications</h2>
         <p class="sec-desc">Structured learning alongside the hands-on work.</p>
       </header>
@@ -652,7 +674,7 @@ span.ev{color:var(--muted)}
 
   <section class="section contact" id="contact" aria-labelledby="contact-title">
     <div class="container">
-      <p class="cmd" data-reveal><span class="prompt">$</span>ping raghav</p>
+      <p class="cmd" data-reveal><span class="prompt">$</span><span class="cmd-t">ping raghav</span></p>
       <h2 class="contact-title" id="contact-title" data-reveal>Let&rsquo;s talk<br><span class="outline">security.</span></h2>
       <div class="contact-grid" data-reveal>
         <p class="contact-lede">Open to feedback, and to conversations about cybersecurity roles &mdash; security operations, application security, IAM, cloud and DevSecOps.</p>
@@ -672,11 +694,17 @@ span.ev{color:var(--muted)}
   </footer>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
 <script>
 (() => {
   'use strict';
   const d = document, de = d.documentElement, w = window;
   const reduce = !!(w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const A = w.anime;
+  const animeOn = !!(A && A.animate && A.splitText && !reduce);
+  const introOn = animeOn && !de.classList.contains('ready');
+  if (animeOn) de.classList.add('a-on');
+  if (!introOn) de.classList.add('ready');
   const $ = (s, r) => (r || d).querySelector(s);
   const $$ = (s, r) => Array.from((r || d).querySelectorAll(s));
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -776,11 +804,18 @@ span.ev{color:var(--muted)}
   /* ---------------- nav state ---------------- */
   const nav = $('#nav'), bar = $('#progress');
   const navLinks = $$('.nav-links a[data-go]');
+  let onActiveChange = null;
   if (hasIO) {
     const secIO = new IntersectionObserver((es) => {
       es.forEach((e) => {
         if (!e.isIntersecting) return;
-        navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+        let current = null;
+        navLinks.forEach((a) => {
+          const on = a.getAttribute('href') === '#' + e.target.id;
+          a.classList.toggle('active', on);
+          if (on) current = a;
+        });
+        if (onActiveChange) onActiveChange(current);
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     ['top', 'about', 'work', 'experience', 'stack', 'certifications', 'contact'].forEach((id) => { const el = d.getElementById(id); if (el) secIO.observe(el); });
@@ -790,7 +825,8 @@ span.ev{color:var(--muted)}
   if (!reduce && hasIO) {
     const els = $$('[data-reveal]');
     const vh = w.innerHeight;
-    const pending = els.filter((el) => el.getBoundingClientRect().top > vh * .95);
+    const animeOwned = '.sec-head, .project-head, .contact-title, p.cmd, .sg';
+    const pending = els.filter((el) => el.getBoundingClientRect().top > vh * .95 && !(animeOn && el.matches(animeOwned)));
     pending.forEach((el) => {
       el.classList.add('pre');
       const n = parseInt(el.dataset.reveal, 10);
@@ -981,8 +1017,19 @@ span.ev{color:var(--muted)}
     const LABEL = { idle: 'queued', run: 'running', pass: 'pass', fail: 'fail', skip: 'skipped', blocked: 'blocked', live: 'live' };
     let runId = 0, build = 41;
     const pad = (s, n) => (s + '          ').slice(0, n);
-    const setState = (el, s) => { el.dataset.state = s; $('.node', el).textContent = GLYPH[s]; $('.st-state', el).textContent = LABEL[s]; };
-    const line = (html) => { const div = d.createElement('div'); div.className = 'ln'; div.innerHTML = html; log.appendChild(div); log.scrollTop = log.scrollHeight; };
+    const setState = (el, s, live) => {
+      el.dataset.state = s;
+      const node = $('.node', el);
+      node.textContent = GLYPH[s];
+      $('.st-state', el).textContent = LABEL[s];
+      if (live && animeOn && (s === 'pass' || s === 'live' || s === 'fail')) A.animate(node, { scale: [.55, 1], duration: 650, ease: 'outBack(1.4)' });
+    };
+    const line = (html, live) => {
+      const div = d.createElement('div');
+      div.className = 'ln'; div.innerHTML = html;
+      log.appendChild(div); log.scrollTop = log.scrollHeight;
+      if (live && animeOn) A.animate(div, { opacity: [0, 1], x: [-8, 0], duration: 420, ease: 'out(3)' });
+    };
     const setResult = (kind, text) => { result.dataset.kind = kind; result.lastElementChild.textContent = text; };
     const mark = (id, hit) => checks.forEach((li) => { const on = li.dataset.gate === id; li.classList.toggle('live', on); li.classList.toggle('hit', on && !!hit); });
 
@@ -990,32 +1037,34 @@ span.ev{color:var(--muted)}
       const id = ++runId;
       const alive = () => id === runId;
       const wait = (ms) => (instant || reduce ? Promise.resolve() : new Promise((r) => setTimeout(r, ms)));
+      const say = (html) => line(html, !instant);
+      const resolve = (el, s) => setState(el, s, !instant);
       build += 1;
       log.textContent = '';
       stages.forEach((s) => setState(s, 'idle'));
       setResult('run', leak ? 'Running build with a leaked key…' : 'Running build…');
-      line('<span class="l-dim">codebuild: build #' + build + ' started' + (leak ? ' (commit includes .env)' : '') + '</span>');
+      say('<span class="l-dim">codebuild: build #' + build + ' started' + (leak ? ' (commit includes .env)' : '') + '</span>');
       for (const el of stages) {
         const key = el.dataset.stage, sp = SPEC[key];
         setState(el, 'run');
         if (!instant) mark(key, false);
-        line('<span class="l-p">▸</span> <span class="l-k">' + pad($('.st-name', el).textContent, 8) + '</span>' + sp.cmd);
+        say('<span class="l-p">▸</span> <span class="l-k">' + pad($('.st-name', el).textContent, 8) + '</span>' + sp.cmd);
         await wait(key === 'deploy' ? 900 : 620);
         if (!alive()) return;
         if (leak && key === 'secrets') {
-          setState(el, 'fail');
+          resolve(el, 'fail');
           if (!instant) mark(key, true);
-          line('  <span class="l-bad">✕ ' + sp.bad + '</span>');
+          say('  <span class="l-bad">✕ ' + sp.bad + '</span>');
           await wait(320);
           if (!alive()) return;
           stages.slice(stages.indexOf(el) + 1).forEach((s) => setState(s, s.dataset.stage === 'deploy' ? 'blocked' : 'skip'));
-          line('<span class="l-bad">✕ build failed at the Secrets gate — deploy blocked</span>');
-          line('<span class="l-dim">  next: revoke and rotate the key, purge it from history, push again</span>');
+          say('<span class="l-bad">✕ build failed at the Secrets gate — deploy blocked</span>');
+          say('<span class="l-dim">  next: revoke and rotate the key, purge it from history, push again</span>');
           setResult('fail', 'Deploy blocked at gate 3 of 5 — secret detected');
           return;
         }
-        setState(el, key === 'deploy' ? 'live' : 'pass');
-        line('  <span class="l-ok">✓ ' + sp.ok + '</span>');
+        resolve(el, key === 'deploy' ? 'live' : 'pass');
+        say('  <span class="l-ok">✓ ' + sp.ok + '</span>');
       }
       mark(null);
       setResult('pass', 'All 5 gates passed — deployed to ECS Fargate');
@@ -1179,6 +1228,7 @@ span.ev{color:var(--muted)}
       heroH = hero ? hero.offsetHeight : heroH;
       if (Net) { Net.resize(); if (reduce) { Net.seed(); Net.draw(); } }
       if (Stego) Stego.size();
+      if (onActiveChange) onActiveChange($('.nav-links a.active'), true);
       lastY = -1;
     });
   });
@@ -1214,10 +1264,176 @@ span.ev{color:var(--muted)}
     c.style.setProperty('--my', (e.clientY - r.top) + 'px');
   }));
 
+  /* ---------------- motion layer (anime.js) ---------------- */
+  if (animeOn) {
+    const { animate, createTimeline, createAnimatable, stagger, splitText, scrambleText, utils } = A;
+    const clearStyles = (root) => {
+      [root].concat(Array.from(root.querySelectorAll('*'))).forEach((n) => {
+        n.style.removeProperty('opacity');
+        n.style.removeProperty('transform');
+      });
+    };
+    const decode = (params) => scrambleText(Object.assign({ cursor: '░▒▓', perturbation: .15 }, params));
+
+    /* Hero intro: nav drops in, name rises letter by letter, status line decodes. */
+    if (introOn) {
+      const touched = [];
+      const splits = [];
+      try {
+        const navItems = $$('.nav-inner > *');
+        const chars = [];
+        $$('#heroName .line-in').forEach((el) => { const s = splitText(el, { chars: true }); splits.push(s); chars.push(...s.chars); });
+        const status = $('.status'), statusT = $('.status-t'), heroRow = $('.hero-row'), metaItems = $$('.hero-meta > div');
+        touched.push(...navItems, status, heroRow, ...metaItems);
+        utils.set(navItems, { opacity: 0, y: -10 });
+        utils.set(chars, { y: '120%' });
+        utils.set([status, heroRow], { opacity: 0, y: 16 });
+        utils.set(metaItems, { opacity: 0, y: 14 });
+        createTimeline({ defaults: { ease: 'out(4)' } })
+          .add(navItems, { opacity: 1, y: 0, duration: 800, delay: stagger(60) }, 0)
+          .add(chars, { y: '0%', duration: 1150, delay: stagger(34) }, 60)
+          .add(status, { opacity: 1, y: 0, duration: 700 }, 180)
+          .add(statusT, { innerHTML: decode({ duration: 800, seed: 7 }) }, 180)
+          .add(heroRow, { opacity: 1, y: 0, duration: 900 }, 520)
+          .add(metaItems, { opacity: 1, y: 0, duration: 800, delay: stagger(70) }, 680);
+      } catch (err) {
+        splits.forEach((s) => { if (s && s.revert) s.revert(); });
+        touched.forEach((el) => el && clearStyles(el));
+        de.classList.remove('a-on');
+        de.classList.add('ready');
+      }
+    }
+
+    /* Section reveals: masked word rises, decoding command lines, staggered rows.
+       Only for content still below the fold at load, so the first screen is never hidden. */
+    if (hasIO) {
+      const vh = w.innerHeight;
+      const below = (el) => el.getBoundingClientRect().top > vh * .95;
+      const maskWords = (el) => {
+        const words = splitText(el, { words: { wrap: 'clip' } }).words;
+        words.forEach((wd) => {
+          const p = wd.parentElement;
+          p.style.padding = '.06em 0 .1em';
+          p.style.margin = '-.06em 0 -.1em';
+        });
+        utils.set(words, { y: '115%' });
+        return words;
+      };
+      const prep = {
+        head(head) {
+          const cmdT = $('.cmd-t', head), title = $('.sec-title', head), desc = $('.sec-desc', head);
+          const words = title ? maskWords(title) : [];
+          if (cmdT) utils.set(cmdT, { opacity: 0 });
+          if (desc) utils.set(desc, { opacity: 0, y: 16 });
+          return () => {
+            const tl = createTimeline({ defaults: { ease: 'out(4)' } });
+            if (cmdT) tl.add(cmdT, { opacity: 1, duration: 200 }, 0).add(cmdT, { innerHTML: decode({ duration: 600 }) }, 0);
+            tl.add(words, { y: '0%', duration: 1100, delay: stagger(60) }, 80);
+            if (desc) tl.add(desc, { opacity: 1, y: 0, duration: 900 }, 320);
+          };
+        },
+        project(head) {
+          const kind = $('.kind', head), title = $('.project-title', head), thesis = $('.project-thesis', head);
+          const words = maskWords(title);
+          utils.set([kind, thesis], { opacity: 0, y: 14 });
+          return () => createTimeline({ defaults: { ease: 'out(4)' } })
+            .add(kind, { opacity: 1, y: 0, duration: 700 }, 0)
+            .add(words, { y: '0%', duration: 1100, delay: stagger(70) }, 60)
+            .add(thesis, { opacity: 1, y: 0, duration: 900 }, 360);
+        },
+        title(el) {
+          const words = maskWords(el);
+          return () => animate(words, { y: '0%', duration: 1200, delay: stagger(80), ease: 'out(4)' });
+        },
+        cmd(el) {
+          const cmdT = $('.cmd-t', el);
+          utils.set(cmdT, { opacity: 0 });
+          return () => createTimeline().add(cmdT, { opacity: 1, duration: 200 }, 0).add(cmdT, { innerHTML: decode({ duration: 600 }) }, 0);
+        },
+        stack(group) {
+          const h = $('h3', group), rows = $$('li', group);
+          const col = parseInt(group.dataset.reveal, 10) || 0;
+          utils.set(h, { opacity: 0, y: 12 });
+          utils.set(rows, { opacity: 0, y: 22 });
+          return () => createTimeline({ delay: col * 120, defaults: { ease: 'out(4)' } })
+            .add(h, { opacity: 1, y: 0, duration: 700 }, 0)
+            .add(rows, { opacity: 1, y: 0, duration: 850, delay: stagger(55) }, 90);
+        },
+        count(el) {
+          return () => animate(el, { innerHTML: scrambleText({ chars: '0-9', duration: 900, settleDuration: 300 }) });
+        }
+      };
+      const plays = new Map();
+      const io = new IntersectionObserver((es) => {
+        es.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const play = plays.get(e.target);
+          io.unobserve(e.target);
+          plays.delete(e.target);
+          if (play) { try { play(); } catch (err) { clearStyles(e.target); } }
+        });
+      }, { rootMargin: '0px 0px -10% 0px' });
+      const register = (el, kind) => {
+        if (!el || !below(el)) return;
+        try { plays.set(el, prep[kind](el)); io.observe(el); }
+        catch (err) { clearStyles(el); }
+      };
+      $$('.section .sec-head').forEach((el) => register(el, 'head'));
+      $$('.project-head').forEach((el) => register(el, 'project'));
+      register($('.contact-title'), 'title');
+      register($('.contact > .container > p.cmd'), 'cmd');
+      $$('.sg').forEach((el) => register(el, 'stack'));
+      $$('.fact-n').forEach((el) => register(el, 'count'));
+    }
+
+    /* Nav: one indicator glides to the active section link instead of underlines blinking. */
+    const ind = $('.nav-ind');
+    if (ind) {
+      let shown = false;
+      onActiveChange = (a, instant) => {
+        if (!a || !a.offsetWidth) {
+          if (shown) animate(ind, { opacity: 0, duration: 300, ease: 'out(2)' });
+          shown = false;
+          return;
+        }
+        if (instant || !shown) {
+          utils.set(ind, { x: a.offsetLeft, width: a.offsetWidth });
+          animate(ind, { opacity: 1, duration: 300, ease: 'out(2)' });
+        } else {
+          animate(ind, { x: a.offsetLeft, width: a.offsetWidth, opacity: 1, duration: 700, ease: 'out(4)' });
+        }
+        shown = true;
+      };
+      onActiveChange($('.nav-links a.active'), true);
+    }
+
+    /* Pointer-only touches: buttons lean toward the cursor, console windows tilt slightly. */
+    const fine = !!(w.matchMedia && w.matchMedia('(hover: hover) and (pointer: fine)').matches);
+    if (fine) {
+      $$('.btn').forEach((b) => {
+        const m = createAnimatable(b, { x: 450, y: 450, ease: 'out(3)' });
+        b.addEventListener('pointermove', (e) => {
+          const r = b.getBoundingClientRect();
+          m.x((e.clientX - r.left - r.width / 2) * .22);
+          m.y((e.clientY - r.top - r.height / 2) * .3);
+        });
+        b.addEventListener('pointerleave', () => { m.x(0); m.y(0); });
+      });
+      $$('.console').forEach((c) => {
+        const t = createAnimatable(c, { rotateX: 700, rotateY: 700, ease: 'out(3)' });
+        c.addEventListener('pointermove', (e) => {
+          const r = c.getBoundingClientRect();
+          t.rotateY(((e.clientX - r.left) / r.width - .5) * 5);
+          t.rotateX(-((e.clientY - r.top) / r.height - .5) * 4);
+        });
+        c.addEventListener('pointerleave', () => { t.rotateX(0); t.rotateY(0); });
+      });
+    }
+  }
+
   const hash = (location.hash || '').slice(1);
   if (/^[\w-]+$/.test(hash) && d.getElementById(hash)) setTimeout(() => { const el = d.getElementById(hash); w.scrollTo(0, clamp(el.getBoundingClientRect().top + w.scrollY - 76, 0, maxY())); }, 80);
 })();
 </script>
-
 </body>
 </html>
