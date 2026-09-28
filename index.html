@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
-<script>(function(d){d.classList.add('js');setTimeout(function(){d.classList.add('ready');},1600);})(document.documentElement);</script>
+<script>(function(d){d.classList.add('js');var seen=null;try{seen=sessionStorage.getItem('ra-boot');}catch(e){}var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;if(!seen&&!calm)d.classList.add('boot-on');setTimeout(function(){d.classList.add('ready');},1600);setTimeout(function(){d.classList.remove('boot-on');},4000);})(document.documentElement);</script>
 <style>
 :root{
   color-scheme:dark;
@@ -328,6 +328,38 @@ span.ev{color:var(--muted)}
 .a-on .nav-links a::after{display:none}
 .project-visual{perspective:1400px}
 .a-on .btn{will-change:transform}
+
+/* boot sequence (first visit per session) */
+.boot{display:none}
+.boot-on{overflow:hidden}
+.boot-on .boot{position:fixed;inset:0;z-index:150;display:flex;align-items:flex-end;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 24px) var(--gutter) calc(env(safe-area-inset-bottom,0px) + clamp(32px,7vw,72px));cursor:pointer}
+.boot-inner{width:100%;max-width:var(--maxw);margin-inline:auto;font:400 13px/1.9 var(--mono);color:var(--muted)}
+.boot-line{margin:0;min-height:1.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.boot-line .bp{color:var(--accent-hi);margin-right:10px}
+.boot-line .bok{color:var(--pass)}
+.boot-bar{margin-top:18px;height:1px;background:var(--line)}
+.boot-bar span{display:block;height:100%;background:var(--accent-hi);transform:scaleX(0);transform-origin:left}
+.boot-skip{margin:14px 0 0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+
+/* experience: a progress rail that fills as you read down the timeline */
+.a-on .timeline{position:relative}
+.a-on .tl{padding-left:34px}
+.a-on .timeline::before,.a-on .timeline::after{content:'';position:absolute;left:4px;top:0;bottom:0;width:1px;pointer-events:none}
+.a-on .timeline::before{background:var(--line-2)}
+.a-on .timeline::after{background:linear-gradient(180deg,var(--accent-hi),var(--accent));transform:scaleY(var(--p,0));transform-origin:top}
+.a-on .tl::after{content:'';position:absolute;left:0;top:calc(clamp(28px,4vw,44px) + 12px);width:9px;height:9px;background:var(--bg);border:1px solid var(--line-2);transform:rotate(45deg);transition:background-color .45s,border-color .45s,box-shadow .45s}
+.a-on .tl.lit::after{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 5px var(--accent-wash)}
+.a-on .tl.lit .tl-type{color:var(--accent-hi)}
+
+/* certifications flip up in 3D */
+.a-on .certs{perspective:1400px}
+.a-on .certs > li{transform-origin:50% 100%}
+
+/* contact: an interactive node grid that ripples from the pointer */
+.field{display:none}
+.a-on .field{display:block;position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 70% 80% at 65% 45%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 70% 80% at 65% 45%,#000 25%,transparent 78%)}
+.a-on .contact > .container{position:relative;z-index:1}
+.field i{position:absolute;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;background:rgba(236,240,247,.16)}
 @media print{
   .nav-inner > *,.hero-fade,.sec-desc,.kind,.project-thesis,.sg h3,.sg li,[data-word],[data-char]{opacity:1!important;transform:none!important}
 }
@@ -346,6 +378,15 @@ span.ev{color:var(--muted)}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="grain" aria-hidden="true"></div>
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot-inner">
+    <p class="boot-line"><span class="bp">&gt;</span><span class="bt" data-t="establishing secure session"></span></p>
+    <p class="boot-line"><span class="bp">&gt;</span><span class="bt" data-t="verifying identity"></span><span class="bok"> &middot; ok</span></p>
+    <p class="boot-line"><span class="bp">&gt;</span><span class="bt" data-t="access granted"></span></p>
+    <div class="boot-bar"><span></span></div>
+    <p class="boot-skip">Click or press any key to skip</p>
+  </div>
+</div>
 
 <header class="nav" id="nav">
   <div class="nav-inner">
@@ -673,6 +714,7 @@ span.ev{color:var(--muted)}
   </section>
 
   <section class="section contact" id="contact" aria-labelledby="contact-title">
+    <div class="field" id="field" aria-hidden="true"></div>
     <div class="container">
       <p class="cmd" data-reveal><span class="prompt">$</span><span class="cmd-t">ping raghav</span></p>
       <h2 class="contact-title" id="contact-title" data-reveal>Let&rsquo;s talk<br><span class="outline">security.</span></h2>
@@ -694,7 +736,7 @@ span.ev{color:var(--muted)}
   </footer>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
+<script src="anime.umd.min.js"></script>
 <script>
 (() => {
   'use strict';
@@ -704,7 +746,8 @@ span.ev{color:var(--muted)}
   const animeOn = !!(A && A.animate && A.splitText && !reduce);
   const introOn = animeOn && !de.classList.contains('ready');
   if (animeOn) de.classList.add('a-on');
-  if (!introOn) de.classList.add('ready');
+  if (!introOn) { de.classList.add('ready'); de.classList.remove('boot-on'); }
+  const scrollHooks = [];
   const $ = (s, r) => (r || d).querySelector(s);
   const $$ = (s, r) => Array.from((r || d).querySelectorAll(s));
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -722,7 +765,7 @@ span.ev{color:var(--muted)}
     w.addEventListener('wheel', (e) => {
       if (e.ctrlKey) return;
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      if (menuOpen) { e.preventDefault(); return; }
+      if (menuOpen || de.classList.contains('boot-on')) { e.preventDefault(); return; }
       const box = e.target.closest && e.target.closest('[data-native-scroll]');
       if (box) {
         const up = e.deltaY < 0;
@@ -825,7 +868,7 @@ span.ev{color:var(--muted)}
   if (!reduce && hasIO) {
     const els = $$('[data-reveal]');
     const vh = w.innerHeight;
-    const animeOwned = '.sec-head, .project-head, .contact-title, p.cmd, .sg';
+    const animeOwned = '.sec-head, .project-head, .contact-title, p.cmd, .sg, .project-visual, .certs > li';
     const pending = els.filter((el) => el.getBoundingClientRect().top > vh * .95 && !(animeOn && el.matches(animeOwned)));
     pending.forEach((el) => {
       el.classList.add('pre');
@@ -893,7 +936,7 @@ span.ev{color:var(--muted)}
     if (!cv || !cv.getContext) return null;
     const ctx = cv.getContext('2d');
     const LABELS = ['SAST', 'SCA', 'SECRETS', 'IAC', 'IMAGE'];
-    let W = 0, H = 0, lanes = [], gates = [], packets = [], flashes = [], acc = 0, laneGrad = null, mobile = false;
+    let W = 0, H = 0, lanes = [], gates = [], packets = [], flashes = [], acc = 0, laneGrad = null, mobile = false, gateP = 1;
     function resize() {
       const r = cv.getBoundingClientRect();
       const dpr = Math.min(w.devicePixelRatio || 1, 2);
@@ -945,18 +988,22 @@ span.ev{color:var(--muted)}
       ctx.beginPath();
       for (const y of lanes) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
       ctx.stroke();
+      const top = lanes[0] - 16, span = lanes[lanes.length - 1] + 10 - top;
+      const gp = gates.map((g, i) => clamp(gateP * 1.8 - i * .18, 0, 1));
       ctx.setLineDash([2, 5]);
       ctx.strokeStyle = 'rgba(236,240,247,.10)';
       ctx.beginPath();
-      for (const g of gates) { ctx.moveTo(g.x, lanes[0] - 16); ctx.lineTo(g.x, lanes[lanes.length - 1] + 10); }
+      gates.forEach((g, i) => { if (gp[i] > 0) { ctx.moveTo(g.x, top); ctx.lineTo(g.x, top + span * gp[i]); } });
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.font = '500 10px "Geist Mono", ui-monospace, monospace';
       ctx.textAlign = 'center';
-      ctx.fillStyle = 'rgba(144,151,163,.6)';
-      for (const g of gates) ctx.fillText(g.label, g.x, lanes[0] - 26);
-      ctx.fillStyle = 'rgba(236,240,247,.10)';
-      for (const g of gates) for (const y of lanes) ctx.fillRect(g.x - 2, y - 2, 4, 4);
+      gates.forEach((g, i) => { ctx.fillStyle = 'rgba(144,151,163,' + (.6 * gp[i]) + ')'; ctx.fillText(g.label, g.x, lanes[0] - 26); });
+      gates.forEach((g, i) => {
+        if (gp[i] <= 0) return;
+        ctx.fillStyle = 'rgba(236,240,247,.10)';
+        for (const y of lanes) if (y - top <= span * gp[i]) ctx.fillRect(g.x - 2, y - 2, 4, 4);
+      });
       for (const f of flashes) {
         if (!f.fail) {
           ctx.fillStyle = 'rgba(63,214,143,' + (.85 * (1 - f.t / .5)) + ')';
@@ -969,7 +1016,7 @@ span.ev{color:var(--muted)}
           ctx.fillRect(f.x - 3, f.y - 3, 6, 6);
         }
       }
-      const k = mobile ? .5 : .9;
+      const k = (mobile ? .5 : .9) * clamp(gateP * 1.4 - .3, 0, 1);
       for (const p of packets) {
         const y = lanes[p.lane];
         let a = vis(p.x) * k;
@@ -988,7 +1035,8 @@ span.ev{color:var(--muted)}
         ctx.fillRect(p.x - 2.5, y - 1.5, 5, 3);
       }
     }
-    return { resize, seed, step, draw };
+    const setGate = (p) => { gateP = p; };
+    return { resize, seed, step, draw, setGate };
   })();
   let netVisible = true;
   if (Net) {
@@ -1193,6 +1241,7 @@ span.ev{color:var(--muted)}
       if (net) net.style.opacity = String(1 - clamp(y / heroH, 0, 1) * .75);
     }
     paintWords();
+    for (const hook of scrollHooks) hook(y);
   }
   function effects(dt) {
     const y = w.scrollY;
@@ -1271,41 +1320,71 @@ span.ev{color:var(--muted)}
       [root].concat(Array.from(root.querySelectorAll('*'))).forEach((n) => {
         n.style.removeProperty('opacity');
         n.style.removeProperty('transform');
+        n.style.removeProperty('clip-path');
       });
     };
     const decode = (params) => scrambleText(Object.assign({ cursor: '░▒▓', perturbation: .15 }, params));
+    const vw = () => w.innerWidth;
 
-    /* Hero intro: nav drops in, name rises letter by letter, status line decodes. */
+    /* Boot sequence, then the hero assembles itself as the curtain lifts. */
     if (introOn) {
       const touched = [];
       const splits = [];
+      const boot = $('#boot');
+      const booting = de.classList.contains('boot-on') && !!boot;
+      const finishBoot = () => {
+        de.classList.remove('boot-on');
+        try { sessionStorage.setItem('ra-boot', '1'); } catch (e) { /* storage unavailable */ }
+      };
       try {
+        const tl = createTimeline({ defaults: { ease: 'out(4)' }, onComplete: finishBoot });
+        let t0 = 0;
+        if (booting) {
+          const lines = $$('.bt', boot), ok = $('.bok', boot), bar = $('.boot-bar span', boot), skip = $('.boot-skip', boot);
+          utils.set([ok, skip], { opacity: 0 });
+          lines.forEach((el, i) => tl.add(el, { innerHTML: decode({ text: el.dataset.t, override: '', duration: 420 }) }, i * 250));
+          tl.add(ok, { opacity: 1, duration: 160, ease: 'linear' }, 640)
+            .add(skip, { opacity: 1, duration: 400 }, 200)
+            .add(bar, { scaleX: [0, 1], duration: 900, ease: 'inOut(3)' }, 0)
+            .add(boot, { y: '-100%', duration: 900, ease: 'inOut(4)', onComplete: finishBoot }, 980);
+          t0 = 1080;
+          const jump = () => { tl.seek(tl.duration); };
+          boot.addEventListener('pointerdown', jump, { once: true });
+          w.addEventListener('keydown', jump, { once: true });
+        }
         const navItems = $$('.nav-inner > *');
+        const lineIns = $$('#heroName .line-in');
         const chars = [];
-        $$('#heroName .line-in').forEach((el) => { const s = splitText(el, { chars: true }); splits.push(s); chars.push(...s.chars); });
+        lineIns.forEach((el) => { const s = splitText(el, { chars: true }); splits.push(s); chars.push(...s.chars); });
+        const outlineChars = splits[1] ? splits[1].chars : [];
         const status = $('.status'), statusT = $('.status-t'), heroRow = $('.hero-row'), metaItems = $$('.hero-meta > div');
         touched.push(...navItems, status, heroRow, ...metaItems);
-        utils.set(navItems, { opacity: 0, y: -10 });
-        utils.set(chars, { y: '120%' });
-        utils.set([status, heroRow], { opacity: 0, y: 16 });
-        utils.set(metaItems, { opacity: 0, y: 14 });
-        createTimeline({ defaults: { ease: 'out(4)' } })
-          .add(navItems, { opacity: 1, y: 0, duration: 800, delay: stagger(60) }, 0)
-          .add(chars, { y: '0%', duration: 1150, delay: stagger(34) }, 60)
-          .add(status, { opacity: 1, y: 0, duration: 700 }, 180)
-          .add(statusT, { innerHTML: decode({ duration: 800, seed: 7 }) }, 180)
-          .add(heroRow, { opacity: 1, y: 0, duration: 900 }, 520)
-          .add(metaItems, { opacity: 1, y: 0, duration: 800, delay: stagger(70) }, 680);
+        utils.set(navItems, { opacity: 0, y: -12 });
+        utils.set(chars, { y: '120%', rotate: 7 });
+        utils.set(outlineChars, { color: 'rgba(238,240,244,1)' });
+        utils.set([status, heroRow], { opacity: 0, y: 22 });
+        utils.set(metaItems, { opacity: 0, y: 18 });
+        const gate = { p: 0 };
+        if (Net) { Net.setGate(0); Net.draw(); }
+        tl.add(chars, { y: '0%', rotate: 0, duration: 1300, delay: stagger(45) }, t0 + 40)
+          .add(outlineChars, { color: 'rgba(238,240,244,0)', duration: 900, delay: stagger(70), ease: 'inOut(2)' }, t0 + 820)
+          .add(gate, { p: 1, duration: 1700, ease: 'inOut(3)', onUpdate: () => { if (Net) Net.setGate(gate.p); } }, t0 + 120)
+          .add(navItems, { opacity: 1, y: 0, duration: 800, delay: stagger(70) }, t0 + 260)
+          .add(status, { opacity: 1, y: 0, duration: 700 }, t0 + 420)
+          .add(statusT, { innerHTML: decode({ duration: 900, seed: 7 }) }, t0 + 420)
+          .add(heroRow, { opacity: 1, y: 0, duration: 1000 }, t0 + 760)
+          .add(metaItems, { opacity: 1, y: 0, duration: 850, delay: stagger(80) }, t0 + 940);
       } catch (err) {
         splits.forEach((s) => { if (s && s.revert) s.revert(); });
         touched.forEach((el) => el && clearStyles(el));
+        if (Net) Net.setGate(1);
         de.classList.remove('a-on');
         de.classList.add('ready');
+        finishBoot();
       }
     }
 
-    /* Section reveals: masked word rises, decoding command lines, staggered rows.
-       Only for content still below the fold at load, so the first screen is never hidden. */
+    /* Reveals for content still below the fold at load (the first screen is never hidden). */
     if (hasIO) {
       const vh = w.innerHeight;
       const below = (el) => el.getBoundingClientRect().top > vh * .95;
@@ -1313,54 +1392,67 @@ span.ev{color:var(--muted)}
         const words = splitText(el, { words: { wrap: 'clip' } }).words;
         words.forEach((wd) => {
           const p = wd.parentElement;
-          p.style.padding = '.06em 0 .1em';
-          p.style.margin = '-.06em 0 -.1em';
+          p.style.padding = '.06em 0 .12em';
+          p.style.margin = '-.06em 0 -.12em';
         });
-        utils.set(words, { y: '115%' });
+        utils.set(words, { y: '118%', rotate: 5 });
         return words;
       };
+      const rise = (words, delayStep) => ({ y: '0%', rotate: 0, duration: 1250, delay: stagger(delayStep) });
       const prep = {
         head(head) {
           const cmdT = $('.cmd-t', head), title = $('.sec-title', head), desc = $('.sec-desc', head);
           const words = title ? maskWords(title) : [];
           if (cmdT) utils.set(cmdT, { opacity: 0 });
-          if (desc) utils.set(desc, { opacity: 0, y: 16 });
+          if (desc) utils.set(desc, { opacity: 0, y: 22 });
           return () => {
             const tl = createTimeline({ defaults: { ease: 'out(4)' } });
-            if (cmdT) tl.add(cmdT, { opacity: 1, duration: 200 }, 0).add(cmdT, { innerHTML: decode({ duration: 600 }) }, 0);
-            tl.add(words, { y: '0%', duration: 1100, delay: stagger(60) }, 80);
-            if (desc) tl.add(desc, { opacity: 1, y: 0, duration: 900 }, 320);
+            if (cmdT) tl.add(cmdT, { opacity: 1, duration: 200 }, 0).add(cmdT, { innerHTML: decode({ duration: 700 }) }, 0);
+            tl.add(words, rise(words, 75), 80);
+            if (desc) tl.add(desc, { opacity: 1, y: 0, duration: 1000 }, 380);
           };
         },
         project(head) {
           const kind = $('.kind', head), title = $('.project-title', head), thesis = $('.project-thesis', head);
           const words = maskWords(title);
-          utils.set([kind, thesis], { opacity: 0, y: 14 });
+          utils.set(kind, { opacity: 0 });
+          utils.set(thesis, { opacity: 0, y: 20 });
           return () => createTimeline({ defaults: { ease: 'out(4)' } })
-            .add(kind, { opacity: 1, y: 0, duration: 700 }, 0)
-            .add(words, { y: '0%', duration: 1100, delay: stagger(70) }, 60)
-            .add(thesis, { opacity: 1, y: 0, duration: 900 }, 360);
+            .add(kind, { opacity: 1, duration: 200 }, 0)
+            .add(kind, { innerHTML: decode({ duration: 700 }) }, 0)
+            .add(words, rise(words, 85), 60)
+            .add(thesis, { opacity: 1, y: 0, duration: 1000 }, 420);
+        },
+        visual(el) {
+          const c = $('.console', el);
+          utils.set(c, { clipPath: 'inset(0% 0% 100% 0% round 16px)', y: 70 });
+          return () => animate(c, { clipPath: 'inset(0% 0% 0% 0% round 16px)', y: 0, duration: 1400, ease: 'inOut(4)' });
         },
         title(el) {
           const words = maskWords(el);
-          return () => animate(words, { y: '0%', duration: 1200, delay: stagger(80), ease: 'out(4)' });
+          return () => animate(words, Object.assign(rise(words, 110), { ease: 'out(4)' }));
         },
         cmd(el) {
           const cmdT = $('.cmd-t', el);
           utils.set(cmdT, { opacity: 0 });
-          return () => createTimeline().add(cmdT, { opacity: 1, duration: 200 }, 0).add(cmdT, { innerHTML: decode({ duration: 600 }) }, 0);
+          return () => createTimeline().add(cmdT, { opacity: 1, duration: 200 }, 0).add(cmdT, { innerHTML: decode({ duration: 700 }) }, 0);
         },
         stack(group) {
           const h = $('h3', group), rows = $$('li', group);
           const col = parseInt(group.dataset.reveal, 10) || 0;
-          utils.set(h, { opacity: 0, y: 12 });
-          utils.set(rows, { opacity: 0, y: 22 });
-          return () => createTimeline({ delay: col * 120, defaults: { ease: 'out(4)' } })
+          utils.set(h, { opacity: 0, y: 14 });
+          utils.set(rows, { opacity: 0, x: -28 });
+          return () => createTimeline({ delay: col * 140, defaults: { ease: 'out(4)' } })
             .add(h, { opacity: 1, y: 0, duration: 700 }, 0)
-            .add(rows, { opacity: 1, y: 0, duration: 850, delay: stagger(55) }, 90);
+            .add(rows, { opacity: 1, x: 0, duration: 900, delay: stagger(65) }, 100);
+        },
+        card(li) {
+          const i = parseInt(li.dataset.reveal, 10) || 0;
+          utils.set(li, { opacity: 0, y: 80, rotateX: -32 });
+          return () => animate(li, { opacity: 1, y: 0, rotateX: 0, duration: 1300, delay: i * 120, ease: 'out(4)' });
         },
         count(el) {
-          return () => animate(el, { innerHTML: scrambleText({ chars: '0-9', duration: 900, settleDuration: 300 }) });
+          return () => animate(el, { innerHTML: scrambleText({ chars: '0-9', duration: 1000, settleDuration: 320 }) });
         }
       };
       const plays = new Map();
@@ -1380,13 +1472,89 @@ span.ev{color:var(--muted)}
       };
       $$('.section .sec-head').forEach((el) => register(el, 'head'));
       $$('.project-head').forEach((el) => register(el, 'project'));
+      $$('.project-visual').forEach((el) => register(el, 'visual'));
       register($('.contact-title'), 'title');
       register($('.contact > .container > p.cmd'), 'cmd');
       $$('.sg').forEach((el) => register(el, 'stack'));
+      $$('.certs > li').forEach((el) => register(el, 'card'));
       $$('.fact-n').forEach((el) => register(el, 'count'));
     }
 
-    /* Nav: one indicator glides to the active section link instead of underlines blinking. */
+    /* Scroll-linked: big titles drift against the scroll, and the timeline rail fills as you read. */
+    const drifters = $$('.sec-title, .project-title, .contact-title');
+    scrollHooks.push(() => {
+      const vh = w.innerHeight, amp = Math.min(vw() * (vw() < 700 ? .02 : .045), 64);
+      drifters.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -100 || r.top > vh + 100) return;
+        const p = clamp((vh - r.top) / (vh + r.height), 0, 1);
+        el.style.translate = ((.6 - p) * 1.6 * amp).toFixed(1) + 'px 0';
+      });
+    });
+    const tlList = $('.timeline');
+    if (tlList) {
+      const items = $$('.tl', tlList);
+      scrollHooks.push(() => {
+        const vh = w.innerHeight, r = tlList.getBoundingClientRect(), line = vh * .62;
+        tlList.style.setProperty('--p', clamp((line - r.top) / r.height, 0, 1).toFixed(4));
+        items.forEach((li) => li.classList.toggle('lit', li.getBoundingClientRect().top + 40 < line));
+      });
+    }
+    scrollHooks.forEach((hook) => hook(w.scrollY));
+
+    /* Contact: a node grid that ripples outward from wherever you click or tap. */
+    const field = $('#field'), contact = $('#contact');
+    if (field && contact) {
+      let dots = [], cols = 0, rows = 0, gap = 34, last = -1;
+      const build = () => {
+        const r = field.getBoundingClientRect();
+        gap = vw() < 700 ? 26 : 34;
+        cols = Math.max(1, Math.floor(r.width / gap));
+        rows = Math.max(1, Math.floor(r.height / gap));
+        const ox = (r.width - (cols - 1) * gap) / 2, oy = (r.height - (rows - 1) * gap) / 2;
+        const frag = d.createDocumentFragment();
+        field.textContent = '';
+        for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+          const i = d.createElement('i');
+          i.style.left = (ox + x * gap) + 'px';
+          i.style.top = (oy + y * gap) + 'px';
+          frag.appendChild(i);
+        }
+        field.appendChild(frag);
+        dots = Array.from(field.children);
+        field._ox = ox; field._oy = oy;
+      };
+      const cellAt = (e) => {
+        const r = field.getBoundingClientRect();
+        const x = Math.round((e.clientX - r.left - field._ox) / gap), y = Math.round((e.clientY - r.top - field._oy) / gap);
+        if (x < 0 || y < 0 || x >= cols || y >= rows) return -1;
+        return y * cols + x;
+      };
+      const ripple = (from) => animate(dots, {
+        scale: [{ to: 2.1, duration: 180, ease: 'out(2)' }, { to: 1, duration: 480, ease: 'inOut(2)' }],
+        backgroundColor: [{ to: 'rgba(157,187,255,.7)', duration: 180 }, { to: 'rgba(236,240,247,.16)', duration: 480 }],
+        delay: stagger(42, { grid: [cols, rows], from })
+      });
+      build();
+      contact.addEventListener('pointerdown', (e) => { const c = cellAt(e); if (c >= 0) ripple(c); });
+      contact.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        const c = cellAt(e);
+        if (c < 0 || c === last) return;
+        last = c;
+        animate(dots[c], {
+          scale: [{ to: 2.4, duration: 160 }, { to: 1, duration: 700, ease: 'inOut(2)' }],
+          backgroundColor: [{ to: 'rgba(157,187,255,.9)', duration: 160 }, { to: 'rgba(236,240,247,.16)', duration: 700 }]
+        });
+      });
+      new IntersectionObserver((es, obs) => {
+        if (es[0].isIntersecting) { obs.disconnect(); ripple('center'); }
+      }, { threshold: .35 }).observe(contact);
+      let rb = 0;
+      w.addEventListener('resize', () => { clearTimeout(rb); rb = setTimeout(build, 200); });
+    }
+
+    /* Nav: one indicator glides to the active section link. */
     const ind = $('.nav-ind');
     if (ind) {
       let shown = false;
@@ -1407,15 +1575,15 @@ span.ev{color:var(--muted)}
       onActiveChange($('.nav-links a.active'), true);
     }
 
-    /* Pointer-only touches: buttons lean toward the cursor, console windows tilt slightly. */
+    /* Mouse-only: buttons lean toward the cursor, console windows tilt toward it. */
     const fine = !!(w.matchMedia && w.matchMedia('(hover: hover) and (pointer: fine)').matches);
     if (fine) {
       $$('.btn').forEach((b) => {
         const m = createAnimatable(b, { x: 450, y: 450, ease: 'out(3)' });
         b.addEventListener('pointermove', (e) => {
           const r = b.getBoundingClientRect();
-          m.x((e.clientX - r.left - r.width / 2) * .22);
-          m.y((e.clientY - r.top - r.height / 2) * .3);
+          m.x((e.clientX - r.left - r.width / 2) * .3);
+          m.y((e.clientY - r.top - r.height / 2) * .42);
         });
         b.addEventListener('pointerleave', () => { m.x(0); m.y(0); });
       });
@@ -1423,8 +1591,8 @@ span.ev{color:var(--muted)}
         const t = createAnimatable(c, { rotateX: 700, rotateY: 700, ease: 'out(3)' });
         c.addEventListener('pointermove', (e) => {
           const r = c.getBoundingClientRect();
-          t.rotateY(((e.clientX - r.left) / r.width - .5) * 5);
-          t.rotateX(-((e.clientY - r.top) / r.height - .5) * 4);
+          t.rotateY(((e.clientX - r.left) / r.width - .5) * 7);
+          t.rotateX(-((e.clientY - r.top) / r.height - .5) * 5);
         });
         c.addEventListener('pointerleave', () => { t.rotateX(0); t.rotateY(0); });
       });
